@@ -1,0 +1,20 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --all-packages
+      - run: uv run ruff check packages experiments
+      - run: uv run pytest
+
+  # The ROS 2 hardware track builds on the robot / dev machines for now.
+  # Add a colcon job (ros:humble container) when klara_robot_api lands and
+  # the package set stabilizes.

@@ -1,0 +1,16 @@
+[project]
+name = "klara-agent"
+version = "0.1.0"
+description = "The CaP-style agent loop: compute-ladder rungs, VLM client abstraction, token accounting."
+requires-python = ">=3.10"
+dependencies = ["klara-core"]
+
+[tool.uv.sources]
+klara-core = { workspace = true }
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/klara_agent"]

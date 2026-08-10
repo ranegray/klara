@@ -9,6 +9,12 @@ __pycache__/
 *.egg-info/
 .pytest_cache/
 
+# Virtual envs
+.venv/
+
+# Run artifacts (episode records, MCAP traces) — synced to shared storage
+data/
+
 # Local/editor state
 .DS_Store
 .vscode/
