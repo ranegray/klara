@@ -3,12 +3,12 @@
 **Kinematic Limits, Agentic Recovery Architecture**
 
 A senior-thesis research platform asking one question: **does agentic
-test-time compute compensate for unreliable hardware — and at what token
+test-time compute compensate for unreliable hardware, and at what token
 cost?**
 
 Cheap servos (Feetech STS3215: ~0.85° backlash, ±1° repeatability, 10-count
-dead zone) take task reliability away. A CaP-style coding agent — retry,
-structured execution feedback, visual differencing — may buy it back, one
+dead zone) take task reliability away. A CaP-style coding agent (retry,
+structured execution feedback, visual differencing) may buy it back, one
 token at a time. KLARA measures the reliability-per-token frontier on a
 low-cost XLeRobot platform: how much each mechanism recovers, where recovery
 hits its ceiling, and where paying tokens to paper over bad hardware becomes
@@ -19,7 +19,7 @@ false economy.
 The agent programs against one frozen primitive contract; sim and hardware
 are interchangeable backends behind it. The actuator unreliability is
 *injected* at the joint-command boundary from measured servo
-characterization — the stressor is real even when the robot is simulated.
+characterization: the stressor is real even when the robot is simulated.
 
 ```
 klara-agent          the compensating machinery under test (compute ladder,
@@ -51,12 +51,12 @@ itself.
 
 Every episode writes one `EpisodeRecord` (JSONL): success, per-turn token
 counts, wall clock, failure attribution, seed, stressor parameters, git SHA.
-Records are append-only thesis evidence — see `klara_core/records.py` for the
+Records are append-only thesis evidence; see `klara_core/records.py` for the
 schema and [docs/protocols/](docs/protocols/) for the accounting rules.
 
 ## Lineage
 
 Built on the open-source [XLeRobot](https://github.com/Vector-Wangel/XLeRobot)
-hardware platform (Wang, 2025) — see [third_party/](third_party/) for the
+hardware platform (Wang, 2025). See [third_party/](third_party/) for the
 URDF license and provenance. KLARA is an independent research stack; the
 robot stays XLeRobot, the name applies to what runs on it.
