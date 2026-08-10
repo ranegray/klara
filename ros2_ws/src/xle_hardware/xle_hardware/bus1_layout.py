@@ -3,8 +3,8 @@
 Bus1 carries the left arm (IDs 1-6) and the head pan/tilt (IDs 7-8) on a single
 1 Mbps Feetech STS3215 daisy chain via /dev/ttyACM0.
 
-Joint names match the URDF in xle_description and the joint name lists in
-xle_hardware.joint_trajectory_guard_node and xle_fake_hardware.fake_sts3215_node.
+Joint names match the URDF in xle_description and the joint name list in
+xle_hardware.joint_trajectory_guard_node.
 Add a new joint here only if it is also added to those.
 """
 
