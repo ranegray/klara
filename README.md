@@ -1,41 +1,75 @@
 # xlerobot-research
 
-A ROS 2 research stack for reproducible XLeRobot experiments.
+A senior-thesis research platform and web console for studying embodied coding agents on low-cost XLeRobot hardware.
+
+**Full specification:** [`docs/xlerobot-research-spec.md`](docs/xlerobot-research-spec.md)
 
 ## Status
 
-Status: early bring-up.
+**Early bring-up · pre-semester planning (Spring 2026).**
 
-This repository is under active development. The initial supported target is the XLeRobot 0.4.0 two-wheel servo variant. The first stable milestone is fake hardware plus one-arm ROS 2 bring-up, not full autonomy.
+What works today is a ROS 2 Humble bring-up path: robot description, fake hardware, guarded trajectories, and a harness event stream. The agent harness, primitive layer, web console, and eval logging described in the project spec are **not implemented yet**.
 
-## What This Is
+| Layer | Status |
+| --- | --- |
+| ROS 2 bring-up (`xle_description`, `xle_hardware`, `xle_fake_hardware`, …) | In progress — fake one-arm path |
+| Primitive API + perception/nav skills | Planned — contract in spec §7 |
+| Agent harness (CaP-X-style loop) | Planned — `xle_harness`, `xle_agent_interfaces` are shells |
+| Web console (FastAPI + React, Jetson-hosted) | Planned — Phase 0 is WebRTC + record button |
+| Eval / trial logging (SQLite) | Planned |
 
-`xlerobot-research` provides a ROS 2 stack for XLeRobot research: robot description, custom hardware nodes, fake hardware, RealSense integration, safety gates, episode logging, benchmark protocols, and reproducibility bundles.
+## North star
 
-The stack is built around a few working principles:
+We are testing one bet:
 
-- custom ROS 2 nodes first
-- standard ROS message types and naming conventions where possible
-- fake hardware and real hardware share the same command contract
-- every result should be reproducible by another researcher with matching hardware
-- agent interfaces come after the robot is observable and safe
+> **Agentic test-time compute can buy back the reliability that cheap hardware gives away.**
 
-## Supported Hardware
+CaP-X showed that retry, execution feedback, and visual differencing can recover manipulation reliability without training — but on well-behaved embodiments. Our platform is the opposite: sub-centimeter servo error, flexy wrists, a base that slips. This project measures whether the recovery machinery keeps up, and at what cost.
 
-Initial support:
+The repo is two intertwined things:
 
-- XLeRobot 0.4.0 two-wheel servo variant
-- SO101 arm configuration used by Pincer
-- STS3215 servo bus
-- Intel RealSense D435if
-- Jetson-class onboard compute
-- ROS 2 Humble
+1. **A research program** (senior theses, CU Boulder) — reliability, mechanism ablation, cost-per-success, and failure taxonomy on a six-task suite.
+2. **A web app** — the experimental instrument: live operation, the agent's generated code beside its execution trace and visual diffs, and per-trial logging that aggregates into the tables the thesis reports.
 
-Each release should name the exact tested hardware manifest.
+The app is not a side project. Every feature exists because an experiment needs it.
 
-## Quick Start
+## Architecture
 
-The first quick start will be simulation/fake-hardware first:
+Four layers. See the spec for diagrams, ownership, and timeline.
+
+```text
+Browser (React console, LAN)
+  ↔ FastAPI on Jetson (WebSocket/REST, WebRTC video, SQLite trials)
+    → Agent harness (VLM loop, test-time compute, budget caps)
+      → Primitive layer (pick, place, navigate_to, detect, …)
+        → ROS 2 stack (motor I/O, IK, perception, SLAM/Nav2)
+          ↔ XLeRobot hardware
+```
+
+**Substrate:** Built on the embedded ROS 2 autonomy stack from [*Cutting the Cord*](https://github.com/ranegray) (onboard perception, IK, SLAM, navigation, teleop). The `ros2_ws/` packages here are the research-layer bring-up and safety gates that sit under the primitive contract.
+
+**The frozen interface** between the primitive layer and the agent harness is `PrimitiveResult` + a closed reason-code enum (spec §7). Agree and stub it in Week 1–2 so harness development never blocks on perception maturity.
+
+## Web console (planned)
+
+Served from the Jetson over LAN. Not a Foxglove clone — an agent-aware eval instrument.
+
+**MVP (must exist to run any experiment):**
+
+- Live view — WebRTC camera feed(s), robot/joint/base state, tri-bus power monitor
+- Manual teleop + E-stop
+- Agent panel — generated program beside live execution trace
+- Trial logging — success, iterations, tokens, cost → SQLite
+
+**v1 (thesis instrument):** visual-diff viewer, eval runner (task × condition × N trials), aggregate tables for the writeup.
+
+**Explicitly cut:** auth, cloud sync, multi-robot fleet views, SaaS-shaped features.
+
+Stack: FastAPI + `rclpy`/rosbridge, WebRTC (`aiortc` or GStreamer), React + Vite, SQLite.
+
+## Quick start (ROS bring-up)
+
+Fake-hardware-first path — the current working milestone:
 
 ```bash
 git clone https://github.com/ranegray/xlerobot-research.git
@@ -46,152 +80,94 @@ source install/setup.bash
 ros2 launch xle_bringup fake_one_arm.launch.py
 ```
 
-This command is the first intended milestone. It should eventually bring up:
+This should bring up `robot_state_publisher`, fake joint states, `/tf`, guarded trajectory forwarding, and `/harness/events`.
 
-- `robot_state_publisher`
-- fake joint states
-- `/tf`
-- guarded trajectory forwarding
-- one arm-controller-style command surface
-- harness event stream
+See [`docs/simulation/fake_hardware.md`](docs/simulation/fake_hardware.md) for commands, topic contract, and bag recording.
 
-See `docs/simulation/fake_hardware.md` for the first fake command and bag target.
+Real left-arm bring-up (read-only by default):
 
-## Architecture
+```bash
+ros2 launch xle_bringup real_one_arm_left.launch.py
+```
 
-Planned package roles:
+## ROS 2 packages
 
-| package | role |
+| Package | Role | Status |
+| --- | --- | --- |
+| `xle_description` | URDF, meshes, RViz | Implemented |
+| `xle_bringup` | Launch composition | Implemented |
+| `xle_hardware` | STS3215 bus, calibration, joint states, command guard | Implemented |
+| `xle_fake_hardware` | Interface-compatible fake motors | Implemented |
+| `xle_perception` | RealSense, color detect, reach-to-pose | Partial |
+| `xle_harness` | Episode state, trial logging, harness gates | Shell only |
+| `xle_benchmarks` | Task suite protocols, eval runner backend | Shell only |
+| `xle_agent_interfaces` | Primitive API boundary for the agent | Shell only |
+
+## Core ROS 2 interface (bring-up)
+
+Global state: `/robot_description`, `/joint_states`, `/tf`, `/tf_static`
+
+Arms (public → guarded):
+
+- `/left_arm_controller/joint_trajectory` → `/left_arm_controller/guarded_joint_trajectory`
+- `/right_arm_controller/joint_trajectory` → `/right_arm_controller/guarded_joint_trajectory`
+
+Harness (implemented today):
+
+- `/harness/events` — JSON events, schema `xle.harness.event.v0` (`command_accepted`, `command_rejected`, `target_rejected`)
+
+Planned: `/episode/state`, `/episode/abort`, controller state, gripper topics. Standard ROS message types before custom messages.
+
+## Task suite (research)
+
+Six tasks graded by recoverability and precision demand — see spec §8. Start with fiducial-tagged objects (Tasks 1–2) so the harness is the variable, not perception debugging.
+
+| Task | What it probes |
 | --- | --- |
-| `xle_description` | URDF, meshes, frame names, robot-state launch path |
-| `xle_bringup` | launch files and configuration composition |
-| `xle_hardware` | STS3215 bus access, motor discovery, calibration loading, joint states, guarded commands |
-| `xle_fake_hardware` | interface-compatible fake motors for testing without the real robot |
-| `xle_perception` | initial RealSense-backed detector and object-pose output |
-| `xle_harness` | episodes, reset state, abort gates, verifier events, evidence logging |
-| `xle_benchmarks` | benchmark task definitions and repeated-run protocols |
-| `xle_agent_interfaces` | boundary between coding agents and the robot API |
+| Pick cube → bin | Baseline; retry value |
+| Stack 2–3 cubes | Placement error under retry |
+| Pour / transfer | Irreversible failure (H1) |
+| Bimanual handover | Two unreliable arms |
+| Mobile fetch | Base noise + loco-manipulation |
+| Tidy the table | Error compounding over long horizon |
 
-## Core ROS 2 Interface
+Conditions: single-shot baseline → +retry/feedback → +visual diff → +ensembling, vs. sim/literature reference.
 
-The initial public contract follows ROS controller conventions where possible.
-
-Global robot state:
-
-- `/robot_description`
-- `/joint_states`
-- `/tf`
-- `/tf_static`
-
-Arm controllers:
-
-- `/left_arm_controller/joint_trajectory`
-- `/left_arm_controller/guarded_joint_trajectory`
-- `/right_arm_controller/joint_trajectory`
-- `/right_arm_controller/guarded_joint_trajectory`
-- `/left_arm_controller/controller_state`
-- `/right_arm_controller/controller_state`
-- `/left_arm_controller/follow_joint_trajectory`
-- `/right_arm_controller/follow_joint_trajectory`
-
-Gripper controllers:
-
-- `/left_gripper_controller/gripper_cmd`
-- `/right_gripper_controller/gripper_cmd`
-
-Perception and harness:
-
-- `/camera/color/image_raw`
-- `/camera/depth/image_rect_raw`
-- `/harness/events`
-- `/episode/state`
-- `/episode/abort`
-
-Standard ROS message types should be used before custom messages.
-
-## Simulation Ladder
-
-Simulation enters as a contract test before it becomes a physics claim.
-
-1. Fake hardware for interface and harness testing.
-2. Kinematic validation with URDF, TF, and RViz.
-3. Physics simulation only when it answers a concrete research question.
-
-## Hardware Bring-Up
-
-Initial bring-up should cover:
-
-- motor ID discovery
-- bus topology
-- calibration
-- joint signs
-- measured joint limits
-- safe one-joint command
-- stow pose
-- first real rosbag
-
-## Reproducibility
-
-Every published benchmark, paper result, or thesis result should point to a replication bundle:
-
-- repo tag
-- hardware manifest
-- calibration files
-- launch commands
-- task protocol
-- reset protocol
-- rosbags
-- run table
-- analysis script
-- expected tolerance
-- known exclusions
-
-Use `docs/experiments/replication_bundle_template.md` as the starting template.
-
-## Safety Model
+## Safety
 
 Generated or agent-written code must never bypass the harness or command guard.
 
-Initial safety rules:
+- Commands are bounded before they reach hardware
+- Primitives refuse unsafe requests with a structured reason code — never silent no-ops
+- Manual interventions and E-stop events are logged
+- Agent access is mediated through the primitive API, not raw motor topics
 
-- commands are bounded before they reach hardware
-- collision or protocol violations abort the episode
-- manual interventions are logged
-- agent access is mediated through explicit interfaces
+## Documentation
 
-## Roadmap
+| Doc | Contents |
+| --- | --- |
+| [`docs/xlerobot-research-spec.md`](docs/xlerobot-research-spec.md) | Project spec — RQs, architecture, timeline, risks |
+| [`docs/simulation/fake_hardware.md`](docs/simulation/fake_hardware.md) | Fake-hardware launch and bag targets |
+| [`docs/experiments/replication_bundle_template.md`](docs/experiments/replication_bundle_template.md) | Replication bundle template |
 
-- v0.1 visible robot model
-- v0.2 fake hardware path
-- v0.3 one-arm hardware read path
-- v0.4 one-arm guarded motion
-- v0.5 RealSense and perception bridge
-- v0.6 first camera-guided reach or grasp
-- v0.7 episode harness
-- v0.8 benchmark task suite
-- v0.9 reproducibility bundle
-- v0.10 research documentation
-- v1.0 public research release
+## Timeline (summary)
 
-## Non-Goals
+| Phase | Target |
+| --- | --- |
+| **0 — pre-semester** | WebRTC skeleton + record button; CaP-Gym in sim; freeze primitive contract |
+| **1 — weeks 1–3** | Primitive stubs on fiducials; single-shot harness; app shell; Task 1 trials |
+| **2 — weeks 4–7** | Retry + visual diff; eval logging in app; Tasks 1–3 |
+| **3 — weeks 8–11** | Full task suite; eval runner + aggregate tables |
+| **4–5 — weeks 12–16** | Trial-scale experiments, analysis, thesis writeup |
 
-For the initial release:
+Assume ~30–40% slip. Details in the spec.
 
-- no MoveIt Pro dependency
-- no required `ros2_control`
-- no Nav2 or base autonomy
-- no bimanual manipulation claim
-- no generalized household manipulation claim
-- no benchmark claims before real target-config motion works
+## Relationship to XLeRobot
 
-## Relationship To XLeRobot
+This is not the upstream [XLeRobot](https://github.com/Vector-Wangel/XLeRobot) repository. It is a research stack and eval console for XLeRobot hardware.
 
-This is not the upstream XLeRobot repository. It is a research stack built for XLeRobot hardware.
-
-The initial robot model is vendored from [Vector-Wangel/XLeRobot](https://github.com/Vector-Wangel/XLeRobot) at commit `137865981ca9e828d0923804cf77ededd22c7816`. The default ROS model is a parked-base derivative for early fake-hardware bring-up; the vendor copy is preserved next to it. See `third_party/XLeRobot-URDF-PROVENANCE.md` and `third_party/XLeRobot-LICENSE` for source and license details.
-
-Credit and license handling should remain explicit for any imported driver, mesh, calibration source, image, or external asset.
+The initial robot model is vendored from XLeRobot at commit `137865981ca9e828d0923804cf77ededd22c7816`. See [`third_party/XLeRobot-URDF-PROVENANCE.md`](third_party/XLeRobot-URDF-PROVENANCE.md).
 
 ## License
 
-License is not selected yet. Prefer a permissive license for code and clear separate treatment for imported meshes, CAD, images, and external assets.
+License not selected yet. Prefer a permissive license for code and clear separate treatment for imported meshes, CAD, images, and external assets.
