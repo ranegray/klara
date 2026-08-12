@@ -6,13 +6,16 @@ Backends call JointStressor.perturb() on every commanded joint target before
 handing it to the simulator (or, for calibration experiments, compare its
 predictions against the real bus).
 
-Model provenance: defaults come from the robo9 STS3215 characterization
-(~0.8–0.9° backlash, ±1° repeatability, 10-count dead zone at 4096
-counts/rev). Replace with our own bench measurements when available, and cite
-whichever source is in force in every EpisodeRecord (records.py stores the
-params). Modeling choices (uniform repeatability noise, symmetric backlash
-hysteresis) are documented inline and are themselves defensible-question
-material — keep them honest.
+Model provenance: defaults come from the peer-reviewed STS3215
+characterization (Kotov, HardwareX, Mar 2026, PMC13087586 — the journal
+version of the robo9 measurements): 0.62° backlash unloaded rising to 1.30°
+loaded, ±1° repeatability, 10-count dead zone at 4096 counts/rev. The 0.85°
+default sits mid-range of the unloaded/loaded bracket; revisit when the
+stressor protocol note (docs/protocols/stressor-model.md) or our own bench
+measurements pin it. Cite whichever source is in force in every EpisodeRecord
+(records.py stores the params). Modeling choices (uniform repeatability
+noise, symmetric backlash hysteresis) are documented inline and are
+themselves defensible-question material — keep them honest.
 """
 
 from __future__ import annotations
