@@ -35,6 +35,14 @@ state). This repo is the instrument, not the science.
   reading is welcome and encouraged.
 - **Never publish anything** (posts, releases). Draft via `/post-update`;
   Rane reviews and posts manually.
+- **Write for a student maintainer.** Rane is learning production development
+  through this repo. Boring, explicit Python: dataclasses, plain functions,
+  explicit over clever — no async, metaclasses, or decorator magic unless
+  unavoidable. Small PRs, one concern each.
+- **Every agent PR includes a tour:** file read-order, why each file exists,
+  the one design decision worth understanding, and 2-3 comprehension-check
+  questions Rane should be able to answer after reading. A PR whose tour
+  questions can't be answered from its diff goes back for simplification.
 
 ## Commands
 
