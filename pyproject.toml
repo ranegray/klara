@@ -5,6 +5,9 @@ members = ["packages/*"]
 dev = [
     "pytest>=8",
     "ruff>=0.5",
+    # experiments/ scripts (not a package, so their deps live here):
+    "pyyaml>=6",        # run_sweep.py config loading
+    "matplotlib>=3.8",  # analysis/plot_frontier.py
 ]
 
 [tool.ruff]
@@ -15,4 +18,4 @@ target-version = "py310"
 select = ["E", "F", "I", "UP", "B"]
 
 [tool.pytest.ini_options]
-testpaths = ["packages"]
+testpaths = ["packages", "experiments/tests"]
