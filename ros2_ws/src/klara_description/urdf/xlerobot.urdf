@@ -16,7 +16,7 @@
         <mesh filename="package://klara_description/meshes/xlerobot/assets/raskogbody.stl" scale="0.0009 0.001 0.0009" />
       </geometry>
       <material name="chassis_mat">
-        <color rgba="0.14902353 0.25098431 0.50196471 1.00000000"/>
+        <color rgba="0.96078431 0.94117647 0.90196078 1.00000000"/>
       </material>
     </visual>
     <collision>

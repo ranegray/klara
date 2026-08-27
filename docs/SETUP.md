@@ -6,8 +6,7 @@ onramp for new team members.
 ## Path A — sim pilot (agent + Isaac Sim)
 
 Prerequisites: [uv](https://docs.astral.sh/uv/), Python ≥3.10, and for actual
-sim runs an RTX GPU + Isaac Sim (pin the version here when the scene lands:
-`Isaac Sim X.Y.Z`).
+sim runs an RTX GPU + Isaac Sim 6.0.1.
 
 ```bash
 git clone https://github.com/ranegray/klara.git && cd klara
