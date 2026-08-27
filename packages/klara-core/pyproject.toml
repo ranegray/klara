@@ -1,9 +1,11 @@
 [project]
 name = "klara-core"
 version = "0.1.0"
-description = "The KLARA contract: primitive API, result types, stressor model, episode records. Pure stdlib — no sim, no ROS."
+description = "The KLARA contract: primitive API, result types, stressor model, episode records, traces. Pure Python — no sim, no ROS."
 requires-python = ">=3.10"
-dependencies = []
+dependencies = [
+    "mcap>=1.1.1",
+]
 
 [build-system]
 requires = ["hatchling"]

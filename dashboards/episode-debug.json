@@ -1,0 +1,118 @@
+{
+  "configById": {
+    "StateTransitions!primtimeline": {
+      "paths": [
+        {
+          "value": "/klara/primitive_call.primitive",
+          "timestampMethod": "receiveTime",
+          "label": "primitive called"
+        },
+        {
+          "value": "/klara/turn.turn_index",
+          "timestampMethod": "receiveTime",
+          "label": "turn"
+        }
+      ],
+      "isSynced": true
+    },
+    "StateTransitions!reasons": {
+      "paths": [
+        {
+          "value": "/klara/primitive_result.reason",
+          "timestampMethod": "receiveTime",
+          "label": "reason code"
+        }
+      ],
+      "isSynced": true
+    },
+    "Plot!joints": {
+      "paths": [
+        {
+          "value": "/klara/joint_targets.commanded_deg[:]",
+          "enabled": true,
+          "timestampMethod": "receiveTime",
+          "label": "commanded (deg)"
+        },
+        {
+          "value": "/klara/joint_targets.perturbed_deg[:]",
+          "enabled": true,
+          "timestampMethod": "receiveTime",
+          "label": "perturbed (deg)"
+        }
+      ],
+      "xAxisVal": "timestamp",
+      "showXAxisLabels": true,
+      "showYAxisLabels": true,
+      "showLegend": true,
+      "legendDisplay": "floating",
+      "isSynced": true
+    },
+    "RawMessages!agentcode": {
+      "topicPath": "/klara/agent_code.code",
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "fontSize": 12
+    },
+    "RawMessages!results": {
+      "topicPath": "/klara/primitive_result",
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "expansion": "all"
+    },
+    "RawMessages!vdm": {
+      "topicPath": "/klara/vdm.text",
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false
+    },
+    "RawMessages!stressor": {
+      "topicPath": "/klara/stressor_params",
+      "diffEnabled": false,
+      "diffMethod": "custom",
+      "diffTopicPath": "",
+      "showFullMessageForDiff": false,
+      "expansion": "all"
+    }
+  },
+  "globalVariables": {},
+  "userNodes": {},
+  "playbackConfig": {
+    "speed": 1
+  },
+  "layout": {
+    "direction": "row",
+    "splitPercentage": 58,
+    "first": {
+      "direction": "column",
+      "splitPercentage": 45,
+      "first": {
+        "direction": "column",
+        "splitPercentage": 55,
+        "first": "StateTransitions!primtimeline",
+        "second": "StateTransitions!reasons"
+      },
+      "second": "Plot!joints"
+    },
+    "second": {
+      "direction": "column",
+      "splitPercentage": 55,
+      "first": "RawMessages!agentcode",
+      "second": {
+        "direction": "row",
+        "splitPercentage": 50,
+        "first": "RawMessages!results",
+        "second": {
+          "direction": "column",
+          "splitPercentage": 50,
+          "first": "RawMessages!vdm",
+          "second": "RawMessages!stressor"
+        }
+      }
+    }
+  }
+}
