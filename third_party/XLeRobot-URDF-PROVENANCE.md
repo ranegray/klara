@@ -33,6 +33,23 @@ Later local geometry changes:
 - Recreated the separately purchased 5-inch Zantle WW01 walker tires as
   parametric 127 mm rounded-tire and six-spoke-core visual meshes. Their simple
   cylinder collisions remain aligned with the ground plane.
+- After checkpoint commit `77fd3c7`, removed the two front RASKOG caster
+  visuals while retaining the two rear casters for stability. The rear-only
+  caster meshes are deterministic subsets of the unchanged vendor meshes.
+- Omitted the printed drive-mount envelopes from the default model as
+  visual-only geometry. Their generated meshes remain available, and no
+  collision, inertial, wheel-joint, or drivetrain properties depend on them.
+- Measured 312.630188 mm between selected hub interfaces and a 23.6716 mm tire
+  gap in `XLeRobot040_dualwheelbase.step`. The former was initially mistaken
+  for the installed wheel track, then rejected because the standalone STEP has
+  no IKEA-cart datum. The cart-relative joint centers retain their visually
+  verified 450 mm separation pending a direct physical axle-center measurement.
+  The documented 5-inch wheel sets a 63.5 mm radius and axle height.
+- Aligned the two rear caster sphere collisions with the retained vendor caster
+  meshes and their ground-contact plane.
+- The Isaac USD import forces a mobile base (`fix_base=False`) so the generated
+  asset can function as a differential-drive articulation.
+- The vendor URDF remains unchanged.
 
 License handling:
 

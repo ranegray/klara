@@ -218,8 +218,8 @@ def add(left: Vector, right: Vector) -> Vector:
 
 def wheel_local(point: Vector, wheel_axis_x: float) -> Vector:
     # Proper rotation from the upstream assembly frame into the wheel link:
-    # STEP X (axle) -> link Z, STEP Z (up) -> link -Y.
-    return (ASSEMBLY_Y - point[1], ASSEMBLY_Z - point[2], point[0] - wheel_axis_x)
+    # STEP X (axle) -> link Z, STEP Z (up) -> link Y.
+    return (ASSEMBLY_Y - point[1], point[2] - ASSEMBLY_Z, point[0] - wheel_axis_x)
 
 
 def normal(vertices: tuple[Vector, Vector, Vector]) -> Vector:

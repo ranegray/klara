@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Import the klara_description URDF as a single Isaac Sim USD asset.
+"""Import the klara_description URDF as a mobile Isaac Sim USD asset.
 
 Run this script with Isaac Sim's Python launcher, not the repository's uv environment:
 
     <isaac-sim>/python.sh <repo>/assets/usd/import_klara.py
 
-The default input is klara_description's parked-base ``xlerobot.urdf`` and
-the default output is ``assets/usd/klara.usd``.
+The default input is klara_description's ``xlerobot.urdf`` and the default
+output is ``assets/usd/klara.usd``. Import explicitly removes any world anchor.
 """
 
 from __future__ import annotations
@@ -109,7 +109,8 @@ def import_urdf(urdf_path: Path, output_path: Path, windowed: bool) -> None:
                     {"name": "klara_description", "path": str(DESCRIPTION_PACKAGE)}
                 ],
                 robot_type="Default",
-                fix_base=None,
+                # A differential-drive articulation must not be anchored to world.
+                fix_base=False,
                 run_asset_transformer=True,
                 run_multi_physics_conversion=True,
             )
