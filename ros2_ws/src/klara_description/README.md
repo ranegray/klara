@@ -7,7 +7,26 @@ The model was imported from the upstream XLeRobot repository archive at `simulat
 URDF files:
 
 - `urdf/xlerobot_0_4_0_vendor.urdf`: vendor import with ROS package mesh URIs and no intentional joint edits.
-- `urdf/xlerobot.urdf`: default parked-base ROS model. This keeps the vendor geometry but changes the root `joint_0` from `floating` to `fixed` so the first fake-hardware launch can publish a useful static `world -> chassis` transform before mobile-base state exists.
+- `urdf/xlerobot.urdf`: default parked-base ROS model. This changes the root `joint_0` from `floating` to `fixed` and adds Klara's assembled XLeRobot 0.4 dual-wheel geometry.
+
+## Dual-wheel geometry
+
+The printable hubs and mounts are derived from
+`assets/XLeRobot_0_4_0_extra.stl`, which stores its parts disconnected and in
+print-bed orientation. Run the assembly script from the repository root to
+regenerate the URDF-ready meshes:
+
+```bash
+python3 assets/assemble_xlerobot_dual_wheels.py
+```
+
+The placements come from the upstream `XLeRobot040_dualwheelbase.step`
+assembly. The source STL does not include the purchased 5-inch walker tires,
+so the script also generates a 127 mm rounded tire and six-spoke core matching
+the Zantle WW01 wheel used by the upstream build. Mount meshes are fixed to
+`chassis`; hub, core, and tire visuals remain attached to `left_wheel` and
+`right_wheel` so they rotate with the existing continuous joints. Tire
+collisions remain simple 127 mm cylinders for stable simulation physics.
 
 Provenance is tracked in [`third_party/XLeRobot-URDF-PROVENANCE.md`](../../../third_party/XLeRobot-URDF-PROVENANCE.md). The upstream license copy is stored at [`third_party/XLeRobot-LICENSE`](../../../third_party/XLeRobot-LICENSE).
 

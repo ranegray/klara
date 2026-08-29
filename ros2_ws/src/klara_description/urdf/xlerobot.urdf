@@ -19,6 +19,22 @@
         <color rgba="0.96078431 0.94117647 0.90196078 1.00000000"/>
       </material>
     </visual>
+    <visual>
+      <origin xyz="-0.15 0.225 -0.3165" rpy="1.5707963 0 3.1415927" />
+      <geometry>
+        <mesh filename="package://klara_description/meshes/xlerobot/assets/dual_wheel_left_mount.stl" scale="0.001 0.001 0.001" />
+      </geometry>
+      <material name="dual_wheel_mount_mat">
+        <color rgba="0.16 0.16 0.18 1" />
+      </material>
+    </visual>
+    <visual>
+      <origin xyz="-0.15 -0.225 -0.3165" rpy="1.5707963 0 3.1415927" />
+      <geometry>
+        <mesh filename="package://klara_description/meshes/xlerobot/assets/dual_wheel_right_mount.stl" scale="0.001 0.001 0.001" />
+      </geometry>
+      <material name="dual_wheel_mount_mat" />
+    </visual>
     <collision>
       <origin xyz="0 0 -0.3" rpy="0 0 0" />
       <geometry>
@@ -121,10 +137,37 @@
   </link>
 
   <link name="left_wheel">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://klara_description/meshes/xlerobot/assets/dual_wheel_tire.stl" scale="0.001 0.001 0.001" />
+      </geometry>
+      <material name="dual_wheel_tire_mat">
+        <color rgba="0.34 0.35 0.36 1" />
+      </material>
+    </visual>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://klara_description/meshes/xlerobot/assets/dual_wheel_core.stl" scale="0.001 0.001 0.001" />
+      </geometry>
+      <material name="dual_wheel_core_mat">
+        <color rgba="0.025 0.025 0.03 1" />
+      </material>
+    </visual>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://klara_description/meshes/xlerobot/assets/dual_wheel_left_hub.stl" scale="0.001 0.001 0.001" />
+      </geometry>
+      <material name="dual_wheel_hub_mat">
+        <color rgba="0.82 0.82 0.78 1" />
+      </material>
+    </visual>
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <cylinder radius="0.05" length="0.04" />
+        <cylinder radius="0.0635" length="0.02367" />
       </geometry>
     </collision>
     <inertial>
@@ -135,10 +178,31 @@
   </link>
 
   <link name="right_wheel">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://klara_description/meshes/xlerobot/assets/dual_wheel_tire.stl" scale="0.001 0.001 0.001" />
+      </geometry>
+      <material name="dual_wheel_tire_mat" />
+    </visual>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://klara_description/meshes/xlerobot/assets/dual_wheel_core.stl" scale="0.001 0.001 0.001" />
+      </geometry>
+      <material name="dual_wheel_core_mat" />
+    </visual>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://klara_description/meshes/xlerobot/assets/dual_wheel_right_hub.stl" scale="0.001 0.001 0.001" />
+      </geometry>
+      <material name="dual_wheel_hub_mat" />
+    </visual>
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <cylinder radius="0.05" length="0.04" />
+        <cylinder radius="0.0635" length="0.02367" />
       </geometry>
     </collision>
     <inertial>
@@ -980,7 +1044,7 @@
   <joint name="left_wheel_joint" type="continuous">
     <parent link="chassis" />
     <child link="left_wheel" />
-    <origin xyz="-0.15 0.225 -0.32" rpy="1.5707963 0 3.1415927" />
+    <origin xyz="-0.15 0.225 -0.3165" rpy="1.5707963 0 3.1415927" />
     <axis xyz="0 0 1" />
     <limit effort="0" velocity="0" />
   </joint>
@@ -988,7 +1052,7 @@
   <joint name="right_wheel_joint" type="continuous">
     <parent link="chassis" />
     <child link="right_wheel" />
-    <origin xyz="-0.15 -0.225 -0.32" rpy="1.5707963 0 3.1415927" />
+    <origin xyz="-0.15 -0.225 -0.3165" rpy="1.5707963 0 3.1415927" />
     <axis xyz="0 0 1" />
     <limit effort="0" velocity="0" />
   </joint>

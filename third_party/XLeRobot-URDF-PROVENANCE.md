@@ -23,6 +23,17 @@ Import changes:
 - Made `xlerobot.urdf` the default parked-base ROS derivative by changing root `joint_0` from `floating` to `fixed`.
 - Did not edit geometry, arm joints, inertial properties, collision meshes, limits, or frame names.
 
+Later local geometry changes:
+
+- On 2026-08-29, assembled the XLeRobot 0.4 dual-wheel hub and mount parts from
+  `assets/XLeRobot_0_4_0_extra.stl` using placements from upstream
+  `hardware/step/XLeRobot_040/XLeRobot040_dualwheelbase.step`.
+- Added the derived meshes only to `urdf/xlerobot.urdf`; the vendor URDF remains
+  unchanged.
+- Recreated the separately purchased 5-inch Zantle WW01 walker tires as
+  parametric 127 mm rounded-tire and six-spoke-core visual meshes. Their simple
+  cylinder collisions remain aligned with the ground plane.
+
 License handling:
 
 - The upstream XLeRobot repository is licensed under Apache-2.0 at the checked commit.
