@@ -1001,7 +1001,7 @@
     <parent link="chassis" />
     <child link="left_wheel" />
     <origin xyz="-0.15 0.225 -0.3165" rpy="1.5707963 0 3.1415927" />
-    <axis xyz="0 0 1" />
+    <axis xyz="0 0 -1" />
     <limit effort="0.980665" velocity="4.72" />
   </joint>
 
@@ -1009,7 +1009,7 @@
     <parent link="chassis" />
     <child link="right_wheel" />
     <origin xyz="-0.15 -0.225 -0.3165" rpy="1.5707963 0 3.1415927" />
-    <axis xyz="0 0 1" />
+    <axis xyz="0 0 -1" />
     <limit effort="0.980665" velocity="4.72" />
   </joint>
 

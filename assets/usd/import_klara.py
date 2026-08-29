@@ -111,7 +111,10 @@ def import_urdf(urdf_path: Path, output_path: Path, windowed: bool) -> None:
                 robot_type="Default",
                 # A differential-drive articulation must not be anchored to world.
                 fix_base=False,
-                run_asset_transformer=True,
+                # Preserve URDF link and joint frames. The asset transformer
+                # recenters scaled visual-only STL links but writes the
+                # reconstructed fixed-joint anchors in raw millimetres.
+                run_asset_transformer=False,
                 run_multi_physics_conversion=True,
             )
             generated_path = Path(URDFImporter(import_config).import_urdf())
