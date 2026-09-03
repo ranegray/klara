@@ -34,6 +34,8 @@ simple cylinders for stable simulation physics.
 Physical differential-drive dimensions:
 
 - Wheel radius: `0.0635 m` (documented 5-inch outside diameter).
+- Both wheel joint axes use negative local Z so positive wheel velocity rolls
+  the tires toward the physical front of the robot.
 - Current cart-relative wheel-center separation/track: `0.45 m`, preserving the
   visually verified placement on the RASKOG base. Measure the physical robot
   axle-center to axle-center before treating this as a calibrated odometry
